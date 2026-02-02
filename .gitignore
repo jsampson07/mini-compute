@@ -1,0 +1,21 @@
+# build artifacts (no need, useless for interacter with repo)
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CTestTestfile.cmake
+Makefile
+*.cmake
+compile_commands.json
+
+# binaries (we do NOT want this cluttering commits and repo)
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dylib
+
+# editor (no clutter)
+.vscode/
+.DS_Store

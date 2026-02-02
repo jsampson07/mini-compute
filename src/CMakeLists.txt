@@ -1,0 +1,5 @@
+# build the src modules (pull in these subdirectories)
+add_subdirectory(common)
+add_subdirectory(coordinator)
+add_subdirectory(worker)
+add_subdirectory(client)
