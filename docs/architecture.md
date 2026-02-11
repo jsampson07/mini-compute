@@ -34,28 +34,28 @@
     - Cancel jobs
 
 4. **State each entity owns:**
-    Coordinator:
+    - Coordinator:
         - All state visible to clients i.e. (job as QUEUED, RUNNING, FAILED, SUCCEEDED, CANCELED) should be owned by the *coordinator*
-            ==> We need a way to establish "truth"
+            - We need a way to establish "truth"
                 - if worker and coordinator both established truth --> client would get mixed feedback
-                    ==> *split-brain*
-    Worker:
+                    - *split-brain*
+    - Worker:
         - Local execution state only (what it is currently running)
         - Reports events (assigned, started, finished, failed) ==> coordinator updates official job state
-    Client:
+    - Client:
         - None (stateless), but influences job state via submit/cancel/status
 
 ## Core Flows
 
 1. Client submits --> Coordinator enqueues (**QUEUED**) --> Worker polls (for work) --> Coordinator assigns + marks **RUNNING** -->
-   Worker executes --> Worker reports result (**SUCCEEDED/FAILED/CANCELED**) --> Coordinator marks terminal state -->
+   Worker executes --> Worker reports result (**SUCCEEDED/FAILED/CANCELED**) - --> Coordinator marks terminal state -->
    Client queries status
 
 2. Client submits --> Coordinator enqueues (**QUEUED**) --> Client cancels while queued --> Coordinator marks **CANCELED**
-   ==> job is never assigned to a worker
+   - ==> job is never assigned to a worker
 
 3. Client submits --> Coordinator assigns + marks **RUNNING** --> Client cancels while running
-   ==> cancellation is **best effort** (later). For v0, cancel guarantee only applies for QUEUED jobs.
+   - ==> cancellation is **best effort** (later). For v0, cancel guarantee only applies for QUEUED jobs.
 
 4. Client submits --> Coordinator assigns + marks **RUNNING** --> Worker disconnects/dies mid-job
    ==> coordinator requeues job (back to **QUEUED**) and later assigns again (at-least-once semantics)
@@ -98,7 +98,7 @@
         - Polling concurrently (race to retrieve the same queued job)
         - Results arrive as client cancels (race btw RESULT and CANCEL)
         - Worker dies while job is RUNNING (race btw requeue decision and late RESULT)
-            ==> for v0: coordinator decision wins; if job already terminal, late result is ignored
+            - ==> for v0: coordinator decision wins; if job already terminal, late result is ignored
 
 2. How are data races prevented?
     - Shared state protected by mutexes
@@ -128,10 +128,10 @@
 
 3. What does the system do when it detects a failure?
     - Worker disconnects while idle
-        --> mark worker dead (drop from pool of workers)
+        - ==> mark worker dead (drop from pool of workers)
     - Worker disconnects while executing a job
-        --> job must eventually leave RUNNING state
-        --> v0 policy: requeue the job back to QUEUED (at-least-once)
+        - ==> job must eventually leave RUNNING state
+        - ==> v0 policy: requeue the job back to QUEUED (at-least-once)
 
 ## Observability
 
